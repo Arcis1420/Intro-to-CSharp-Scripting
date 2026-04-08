@@ -39,6 +39,15 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        //BEGIN NEW CODE
+        if (_input.actions["Pause"].WasPressedThisFrame())
+        {
+            GameManager.Instance.TogglePause();
+        }
+        //END NEW CODE
+
+
         //if Fire action was performed log it to the console
         if (_input.actions["Fire"].WasPressedThisFrame())
         {
@@ -51,6 +60,9 @@ public class PlayerController : MonoBehaviour
             //Get the Rigidbody 2D component from the new ball 
             //and set its velocity to x:-10f, y:0, z:0
             ball.GetComponent<BallController>()?.SetDirection(_facingVector);
+
+            if (GameManager.Instance.State != GameState.Playing) return;
+
         }
     }
 
@@ -66,6 +78,9 @@ public class PlayerController : MonoBehaviour
         {
             _facingVector = _rigidbody.velocity;
         }
+
+        if (GameManager.Instance.State != GameState.Playing) return;
+
     }
 }
 

@@ -1,11 +1,12 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
     private Rigidbody2D _rigidbody;
     private Vector2 _direction = Vector2.right;
+
 
     void Awake()
     {
@@ -19,43 +20,19 @@ public class EnemyController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //REPLACE _rigidbody.velocity = _direction * 2; with:
         if (GameManager.Instance.State == GameState.Playing)
         {
             _rigidbody.velocity = _direction * 2;
         }
+
         else
         {
             _rigidbody.velocity = Vector2.zero;
         }
+
+
+
     }
-
-
-    private void OnEnable()
-    {
-        GameManager.OnAfterStateChanged += HandleGameStateChange;
-    }
-
-    private void OnDisable()
-    {
-        GameManager.OnAfterStateChanged -= HandleGameStateChange;
-    }
-
-    private void HandleGameStateChange(GameState state)
-    {
-        if (state == GameState.Starting)
-        {
-            GetComponent<SpriteRenderer>().color = Color.grey;
-        }
-
-        if (state == GameState.Playing)
-        {
-            GetComponent<SpriteRenderer>().color = Color.magenta;
-        }
-    }
-
-
-
 
     //IEnumerator return type for coroutine
     //that can yield for time and come back
@@ -70,4 +47,30 @@ public class EnemyController : MonoBehaviour
             yield return new WaitForSeconds(1);
         }
     }
+
+    private void OnEnable()
+    {
+        GameManager.OnAfterStateChanged += HandleGameStateChange;
+    }
+
+
+    private void OnDisable()
+    {
+        GameManager.OnAfterStateChanged -= HandleGameStateChange;
+    }
+
+
+    private void HandleGameStateChange(GameState state)
+    {
+        if (state == GameState.Starting)
+        {
+            GetComponent<SpriteRenderer>().color = Color.grey;
+        }
+        if (state == GameState.Playing)
+        {
+            GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 218f / 255f);
+        }
+    }
+
+
 }

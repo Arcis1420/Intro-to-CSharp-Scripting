@@ -1,13 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem.LowLevel;
 
-
-//An enum of all the possible GameStates (Many are Gameplay Modes!)
-[Serializable]
 public enum GameState
 {
     Starting = 1,
@@ -17,56 +12,24 @@ public enum GameState
     VictoryDance = 25
 }
 
-public class GameManager : Singleton<GameManager>
+public class GameManager : Singleton<GameManager>   
 {
-
     public static event Action<GameState> OnBeforeStateChanged;
     public static event Action<GameState> OnAfterStateChanged;
+    public GameState State { get; private set;  }
 
-    private GameState _previousState = GameState.Starting;
-
-    public GameState State { get; private set; }
-
+    // Start is called before the first frame update
     void Start()
     {
-        //Begin with the "Starting" game state
         ChangeState(GameState.Starting);
-        _previousState = State;
-        State = newState;
-        Debug.Log("Changed Game State to    : " + newState);
+    }
 
-        if (_previousState == GameState.Paused)
-            Time.timeScale = 1;
-        switch (newState)
-        {
-            case GameState.Starting:
-                StartCoroutine(HandleStarting());
-                break;
-            case GameState.Playing:
-                break;
-            case GameState.Paused:
-                Time.timeScale = 0;
-                break;
-            case GameState.FailScreen:
-                break;
-            case GameState.VictoryDance:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
-                break;
-
-        }
-        }
-
-        public void ChangeState(GameState newState)
+    public void ChangeState(GameState newState)
     {
-        State = newState;
-        Debug.Log("Changed Game State to    : " + newState);
-
-
         OnBeforeStateChanged?.Invoke(newState);
 
-        //This Game Manager can do high level manager stuff, itself.
+        State = newState;
+
         switch (newState)
         {
             case GameState.Starting:
@@ -74,17 +37,16 @@ public class GameManager : Singleton<GameManager>
                 break;
             case GameState.Playing:
                 break;
-            case GameState.Paused:
+            case GameState.Paused: 
                 break;
-            case GameState.FailScreen:
+            case GameState.FailScreen: 
                 break;
-            case GameState.VictoryDance:
+            case GameState.VictoryDance: 
                 break;
             default:
-                Debug.Log("GameState not handled: " + nameof(newState));
-                //throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
-                break;
+                throw new ArgumentOutOfRangeException(nameof(newState), newState, message: null);
         }
+
 
         OnAfterStateChanged?.Invoke(newState);
 
@@ -92,18 +54,7 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator HandleStarting()
     {
-        //Play music here?
         yield return new WaitForSeconds(2);
         ChangeState(GameState.Playing);
     }
-    public void TogglePause()
-    {
-        //ChangeState toggles between Paused and previous state
-        if (State == GameState.Paused)
-            ChangeState(_previousState);
-        else
-            ChangeState(GameState.Paused);
-    }
 }
-
-

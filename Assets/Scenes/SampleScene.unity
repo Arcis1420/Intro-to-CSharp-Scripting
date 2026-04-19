@@ -182,7 +182,19 @@ MonoBehaviour:
       m_Calls: []
   OnZero:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11500000, guid: a1cb57f8d24892d42a9c9e7a632d03d9, type: 3}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &134686852 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7074189036114249559, guid: 8f82819588ce10f48904dca773b072e5, type: 3}

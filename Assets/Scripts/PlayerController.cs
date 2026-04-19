@@ -1,20 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
 using UnityEngine;
 using UnityEngine.InputSystem; //Don't miss this!
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] GameObject _ballPrefab;
-    private PlayerInput _input;
+    [SerializeField] private GameObject _ballPrefab;
+    private PlayerInput _input; //field to reference Player Input component
     private Rigidbody2D _rigidbody;
-
-    //*NEW* remember facing direction (even after stopped)
     private Vector2 _facingVector = Vector2.right;
-
-
- 
 
     // Start is called before the first frame update
     void Start()
@@ -39,30 +35,14 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        //BEGIN NEW CODE
-        if (_input.actions["Pause"].WasPressedThisFrame())
-        {
-            GameManager.Instance.TogglePause();
-        }
-        //END NEW CODE
-
-
         //if Fire action was performed log it to the console
         if (_input.actions["Fire"].WasPressedThisFrame())
         {
-            //create a new object that is a clone of the ballPrefab
-            //at this object's position and default rotation
-            //and use a new variable (ball) to reference the clone
             var ball = Instantiate(_ballPrefab,
-                                transform.position,
-                                Quaternion.identity);
+                               transform.position,
+                               Quaternion.identity);
             //Get the Rigidbody 2D component from the new ball 
-            //and set its velocity to x:-10f, y:0, z:0
             ball.GetComponent<BallController>()?.SetDirection(_facingVector);
-
-            if (GameManager.Instance.State != GameState.Playing) return;
-
         }
     }
 
@@ -78,9 +58,7 @@ public class PlayerController : MonoBehaviour
         {
             _facingVector = _rigidbody.velocity;
         }
-
-        if (GameManager.Instance.State != GameState.Playing) return;
-
     }
 }
+
 

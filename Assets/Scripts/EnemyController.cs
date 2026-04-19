@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
@@ -19,43 +18,10 @@ public class EnemyController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //REPLACE _rigidbody.velocity = _direction * 2; with:
-        if (GameManager.Instance.State == GameState.Playing)
-        {
-            _rigidbody.velocity = _direction * 2;
-        }
-        else
-        {
-            _rigidbody.velocity = Vector2.zero;
-        }
+        //keep resetting the velocity to the
+        //direction * speed even if nudged
+        _rigidbody.velocity = _direction * 2;
     }
-
-
-    private void OnEnable()
-    {
-        GameManager.OnAfterStateChanged += HandleGameStateChange;
-    }
-
-    private void OnDisable()
-    {
-        GameManager.OnAfterStateChanged -= HandleGameStateChange;
-    }
-
-    private void HandleGameStateChange(GameState state)
-    {
-        if (state == GameState.Starting)
-        {
-            GetComponent<SpriteRenderer>().color = Color.grey;
-        }
-
-        if (state == GameState.Playing)
-        {
-            GetComponent<SpriteRenderer>().color = Color.magenta;
-        }
-    }
-
-
-
 
     //IEnumerator return type for coroutine
     //that can yield for time and come back

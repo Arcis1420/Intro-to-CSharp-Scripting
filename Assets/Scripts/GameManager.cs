@@ -18,6 +18,9 @@ public class GameManager : Singleton<GameManager>
     public static event Action<GameState> OnAfterStateChanged;
     public GameState State { get; private set;  }
 
+    private GameState _previousState = GameState.Starting;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -28,7 +31,14 @@ public class GameManager : Singleton<GameManager>
     {
         OnBeforeStateChanged?.Invoke(newState);
 
+        _previousState = State;
+
         State = newState;
+
+        if (_previousState == GameState.Paused)
+            Time.timeScale = 1;
+        
+
 
         switch (newState)
         {
@@ -38,6 +48,7 @@ public class GameManager : Singleton<GameManager>
             case GameState.Playing:
                 break;
             case GameState.Paused: 
+                Time.timeScale = 0;
                 break;
             case GameState.FailScreen: 
                 break;
@@ -57,4 +68,23 @@ public class GameManager : Singleton<GameManager>
         yield return new WaitForSeconds(2);
         ChangeState(GameState.Playing);
     }
-}
+
+    public void TogglePause()
+    {
+        if (State == GameState.Paused)
+        {
+            ChangeState(_previousState);
+        }
+
+        else
+        {
+            ChangeState(GameState.Paused);
+        }
+
+
+    }
+
+
+
+
+}//EndClass

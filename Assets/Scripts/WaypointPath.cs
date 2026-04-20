@@ -33,4 +33,20 @@ public class WaypointPath : MonoBehaviour
 
         return points[_currentPointIndex];
     }
+
+    private void OnDrawGizmos()
+    {
+        var transforms = GetComponentsInChildren<Transform>(true);
+        if (transforms.Length >= 2)
+        {
+            for (int i = 0, j = 1; j
+                < transforms.Length; i++; j++)
+            {
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawLine(transforms[i].position, transforms[j].position);
+            }
+
+            Gizmos.DrawLine(transforms[transforms.Length - 1].position, transforms[0].position);
+        }
+    }
 }

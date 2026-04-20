@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +34,10 @@ public class EnemyController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _waypointPath = GetComponentInChildren<WaypointPath>();
     }
+
+
+
+
 
     // Start is called before the first frame update
     private IEnumerator Start()
@@ -80,9 +85,14 @@ public class EnemyController : MonoBehaviour
         {
             _rb.velocity = Vector2.zero;
         }
+
+    }
+    public void AcceptDefeat()
+    {
+        Destroy(gameObject);
     }
 
-    
+
     private void HandleGameStateChange(GameState state)
     {
         if (state == GameState.Starting)
@@ -94,4 +104,7 @@ public class EnemyController : MonoBehaviour
             GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 218f / 255f);
         }
     }
+
+   
+
 }

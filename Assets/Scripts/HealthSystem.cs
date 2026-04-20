@@ -6,8 +6,8 @@ using UnityEngine.Events; //don't miss that you need this for UnityEvent
 
 public class HealthSystem : MonoBehaviour
 {
-    [SerializeField] private int maxHp = 3;
-    [SerializeField] private int hp = 3;
+    [SerializeField] private int maxHp = 10;
+    [SerializeField] private int hp = 10;
 
     [SerializeField] private UnityEvent OnDamaged;
     [SerializeField] private UnityEvent OnZero;
@@ -26,5 +26,8 @@ public class HealthSystem : MonoBehaviour
             OnZero?.Invoke();
         }
     }
+
+
+
 
 }

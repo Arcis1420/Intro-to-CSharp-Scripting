@@ -19,6 +19,12 @@ public class EnemyController : MonoBehaviour
     }
 
 
+    public void AcceptDefeat()
+    {
+        Destroy(gameObject);
+    }
+
+
 
     [SerializeField] private float patrolDelay = 1;
     [SerializeField] private float patrolSpeed = 3;
@@ -26,6 +32,7 @@ public class EnemyController : MonoBehaviour
     private Rigidbody2D _rb;
     private WaypointPath _waypointPath;
     private Vector2 _patrolTargetPosition;
+    private Animator _animator;
 
 
     // Awake is called before Start
@@ -33,13 +40,21 @@ public class EnemyController : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _waypointPath = GetComponentInChildren<WaypointPath>();
+        _animator = GetComponent<Animator>();
     }
 
+    private void HandleGameStateChange(GameState state)
+    {
+        if (state == GameState.Starting)
+        {
+            GetComponent<SpriteRenderer>().color = Color.grey;
+        }
+        if (state == GameState.Playing)
+        {
+            GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 218f / 255f);
+        }
+    }
 
-
-
-
-    // Start is called before the first frame update
     private IEnumerator Start()
     {
         if (_waypointPath)
@@ -53,32 +68,17 @@ public class EnemyController : MonoBehaviour
     {
         if (!_waypointPath) return;
 
-        //set our direction toward that waypoint:
-        //subtracting our position from target position
-        //gives us the slope line between the two
-        //We can get direction by normalizing it
-        //We can get distance by magnitude
         var dir = _patrolTargetPosition - (Vector2)transform.position;
 
-        //if we are close enough to the target,
-        //time to get the next waypoint
         if (dir.magnitude <= 0.1)
         {
-            //get next waypoint
             _patrolTargetPosition = _waypointPath.GetNextWaypointPosition();
 
-            //change direction
             dir = _patrolTargetPosition - (Vector2)transform.position;
         }
 
-        //this if/else is not in the video (it was made in the GameManager videos)
-        //Be sure to update the line in the if clause to match the change in the
-        //video instead of adding it above
         if (GameManager.Instance.State == GameState.Playing)
         {
-            //UPDATE: how velocity is set
-            //normalized reduces dir magnitude to 1, so we can
-            //keep at the speed we want by multiplying
             _rb.velocity = dir.normalized * patrolSpeed;
         }
         else
@@ -87,23 +87,25 @@ public class EnemyController : MonoBehaviour
         }
 
     }
-    public void AcceptDefeat()
+
+    public void TakeHit()
     {
-        Destroy(gameObject);
+        _animator.Play(stateName: "EnemyHit");
     }
 
 
-    private void HandleGameStateChange(GameState state)
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        if (state == GameState.Starting)
+        if (other.transform.CompareTag("Player"))
         {
-            GetComponent<SpriteRenderer>().color = Color.grey;
-        }
-        if (state == GameState.Playing)
-        {
-            GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 218f / 255f);
+            other.transform.GetComponent<HealthSystem>()?.Damage(3);
+            Vector2 awayDirection = (Vector2)(other.transform.position - transform.position);
+            other.transform.GetComponent<PlayerController>()?.Recoil(awayDirection * 3f);
         }
     }
+
+
+    
 
    
 

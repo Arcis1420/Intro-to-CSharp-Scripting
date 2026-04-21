@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 
@@ -21,13 +22,20 @@ public class EnemyController : MonoBehaviour
 
     public void AcceptDefeat()
     {
+        GameEventDispatcher.TriggerEnemyDefeated();
         Destroy(gameObject);
     }
 
+    public void ReloadSampleScene()
+    {
+        SceneManager.LoadScene("SampleScene");
+    }
 
 
     [SerializeField] private float patrolDelay = 1;
     [SerializeField] private float patrolSpeed = 3;
+    [SerializeField] private int contactDamage = 3;
+    [SerializeField] private float knockbackForce = 3f;
 
     private Rigidbody2D _rb;
     private WaypointPath _waypointPath;
@@ -45,13 +53,25 @@ public class EnemyController : MonoBehaviour
 
     private void HandleGameStateChange(GameState state)
     {
-        if (state == GameState.Starting)
+        var sprite = GetComponent<SpriteRenderer>();
+
+        switch (state)
         {
-            GetComponent<SpriteRenderer>().color = Color.grey;
-        }
-        if (state == GameState.Playing)
-        {
-            GetComponent<SpriteRenderer>().color = new Color(1f, 0f, 218f / 255f);
+            case GameState.Starting:
+                sprite.color = Color.grey;
+                break;
+
+            case GameState.Playing:
+                sprite.color = new Color(1f, 0f, 218f / 255f);
+                break;
+
+            case GameState.Paused:
+                sprite.color = Color.gray;
+                break;
+
+            case GameState.FailScreen:
+                sprite.color = Color.gray;
+                break;
         }
     }
 
@@ -96,17 +116,26 @@ public class EnemyController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (other.transform.CompareTag("Player"))
+        if (!other.transform.CompareTag("Player")) return;
+
+        var health = other.transform.GetComponent<HealthSystem>();
+        var player = other.transform.GetComponent<PlayerController>();
+
+        if (health != null)
         {
-            other.transform.GetComponent<HealthSystem>()?.Damage(3);
-            Vector2 awayDirection = (Vector2)(other.transform.position - transform.position);
-            other.transform.GetComponent<PlayerController>()?.Recoil(awayDirection * 3f);
+            health.Damage(contactDamage);
+        }
+
+        if (player != null)
+        {
+            Vector2 awayDirection = (other.transform.position - transform.position).normalized;
+            player.Recoil(awayDirection * knockbackForce);
         }
     }
 
 
-    
 
-   
+
+
 
 }

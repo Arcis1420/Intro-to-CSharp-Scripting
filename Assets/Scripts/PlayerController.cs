@@ -1,6 +1,8 @@
-
-using System;
+using JetBrains.Annotations;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem; //Don't miss this!
 
 public class PlayerController : MonoBehaviour
@@ -26,9 +28,10 @@ public class PlayerController : MonoBehaviour
         //Invoke(nameof(AcceptDefeat), 10);
     }
 
-    void AcceptDefeat()
+    public void AcceptDefeat()
     {
         Destroy(gameObject);
+        SceneManager.LoadScene("SampleScene");
     }
 
     // Update is called once per frame

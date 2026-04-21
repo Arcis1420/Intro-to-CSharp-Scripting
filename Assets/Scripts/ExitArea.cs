@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ExitArea : MonoBehaviour
@@ -7,33 +5,26 @@ public class ExitArea : MonoBehaviour
     [SerializeField] private string sceneToLoad;
     [SerializeField] private int entranceNumber = -1;
 
-    public string GetScene()
-    {
-        return sceneToLoad;
-    }
+    public string GetScene() => sceneToLoad;
 
-    public int GetSceneEntranceNumber()
-    {
-        return entranceNumber;
-    }
+    public int GetSceneEntranceNumber() => entranceNumber;
 
     private void OnDrawGizmos()
     {
         var collider = GetComponent<PolygonCollider2D>();
+        if (collider == null) return;
+
         var points = collider.points;
         Vector2 center = (Vector2)transform.position + collider.offset;
 
         Gizmos.color = Color.yellow;
 
-        for (int i = 0, j = 1; j < points.Length; ++i, ++j)
+        for (int i = 0; i < points.Length; i++)
         {
-            Gizmos.DrawLine(center + points[i], center + points[j]);
-        }
+            Vector2 current = center + points[i];
+            Vector2 next = center + points[(i + 1) % points.Length];
 
-        if (points.Length > 1)
-        {
-            Gizmos.DrawLine(center + points[1], center + points[points.Length - 1]);
-
+            Gizmos.DrawLine(current, next);
         }
     }
 }

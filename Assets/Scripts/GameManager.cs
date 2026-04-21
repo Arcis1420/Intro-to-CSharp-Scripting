@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using System;
+using System.Collections;
 using UnityEngine;
 
 public enum GameState
@@ -12,16 +11,15 @@ public enum GameState
     VictoryDance = 25
 }
 
-public class GameManager : Singleton<GameManager>   
+public class GameManager : Singleton<GameManager>
 {
     public static event Action<GameState> OnBeforeStateChanged;
     public static event Action<GameState> OnAfterStateChanged;
-    public GameState State { get; private set;  }
+
+    public GameState State { get; private set; }
 
     private GameState _previousState = GameState.Starting;
 
-
-    // Start is called before the first frame update
     void Start()
     {
         ChangeState(GameState.Starting);
@@ -32,35 +30,33 @@ public class GameManager : Singleton<GameManager>
         OnBeforeStateChanged?.Invoke(newState);
 
         _previousState = State;
-
         State = newState;
 
         if (_previousState == GameState.Paused)
             Time.timeScale = 1;
-        
-
 
         switch (newState)
         {
             case GameState.Starting:
                 StartCoroutine(HandleStarting());
                 break;
+
             case GameState.Playing:
                 break;
-            case GameState.Paused: 
+
+            case GameState.Paused:
                 Time.timeScale = 0;
                 break;
-            case GameState.FailScreen: 
+
+            case GameState.FailScreen:
+            case GameState.VictoryDance:
                 break;
-            case GameState.VictoryDance: 
-                break;
+
             default:
-                throw new ArgumentOutOfRangeException(nameof(newState), newState, message: null);
+                throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
         }
 
-
         OnAfterStateChanged?.Invoke(newState);
-
     }
 
     private IEnumerator HandleStarting()
@@ -72,19 +68,8 @@ public class GameManager : Singleton<GameManager>
     public void TogglePause()
     {
         if (State == GameState.Paused)
-        {
             ChangeState(_previousState);
-        }
-
         else
-        {
             ChangeState(GameState.Paused);
-        }
-
-
     }
-
-
-
-
-}//EndClass
+}
